@@ -37,7 +37,7 @@ public class LearningPlanController {
 
     //Get
    @GetMapping("/listar")
-public ResponseEntity<List<LearningPlan>> listar() {
+    public ResponseEntity<List<LearningPlan>> listar() {
 
     List<LearningPlan> learningPlans = service.listar();
 

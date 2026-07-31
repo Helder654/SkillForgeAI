@@ -5,29 +5,39 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
-import com.example.SkillForgeAI.Model.LearningPlan;
+
+import com.example.SkillForgeAI.DTO.LearningPlanDTO;
+import com.example.SkillForgeAI.Mapper.LearningPlanMapper;
+import com.example.SkillForgeAI.Model.LearningPlanModel;
 import com.example.SkillForgeAI.Repository.LearningPlanRepository;
 
 @Service
 public class LearningPlanService{
 
-    private LearningPlanRepository repository;
-
-    public LearningPlanService(LearningPlanRepository repository) {
-        this.repository = repository;
-    }
+    private final LearningPlanRepository repository;
+    private final LearningPlanMapper mapper;
     
-    public LearningPlan salvar(LearningPlan learningplan){
-        return repository.save(learningplan);
+    public LearningPlanService(LearningPlanRepository repository, LearningPlanMapper mapper) {
+        this.repository = repository;
+        this.mapper = mapper;
+    }
+
+    public LearningPlanDTO salvar(LearningPlanDTO learningPlanDTO){
+        LearningPlanModel plan = mapper.map(learningPlanDTO);
+        plan = repository.save(plan);
+        return mapper.map(plan);
     }
 
 
-    public List<LearningPlan> listar(){
-        return repository.findAll();
+    public List<LearningPlanDTO> listar(){
+        return repository.findAll()
+        .stream()
+        .map(mapper::map)
+        .toList();
     }
 
-    public LearningPlan alterar(Long id, Map<String, Object> campos) {
-        LearningPlan learningPlan = repository.findById(id).
+    public LearningPlanDTO alterar(Long id, Map<String, Object> campos) {
+        LearningPlanModel learningPlan = repository.findById(id).
         orElseThrow(() -> new RuntimeException("LearnPlan não encontrado"));
         
         if(campos.containsKey("nome")){
@@ -53,17 +63,17 @@ public class LearningPlanService{
         if(campos.containsKey("objetivo")){
             learningPlan.setObjetivo((String) campos.get("objetivo"));
          }
-          
-          return repository.save(learningPlan);
+
+          learningPlan = repository.save(learningPlan);
+          return mapper.map(learningPlan);
         }
 
-    public Optional<LearningPlan> listarId(Long id){
+    public Optional<LearningPlanModel> listarId(Long id){
         return repository.findById(id);
     }
 
     public void deletar(Long id){
         repository.deleteById(id);
-        
     }
 }
 

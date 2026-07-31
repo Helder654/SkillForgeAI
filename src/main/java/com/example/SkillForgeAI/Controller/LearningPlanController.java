@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.SkillForgeAI.Model.LearningPlan;
+import com.example.SkillForgeAI.DTO.LearningPlanDTO;
 import com.example.SkillForgeAI.Service.LearningPlanService;
 
 @RestController
@@ -26,20 +26,19 @@ public class LearningPlanController {
         this.service = service;
     }
 
-
     //Post
     @PostMapping("/criar")
-    public ResponseEntity<LearningPlan> criar(@RequestBody LearningPlan learningPlan){
-        LearningPlan salvo = service.salvar(learningPlan);
+    public ResponseEntity<LearningPlanDTO> criar(@RequestBody LearningPlanDTO learningPlan){
+        LearningPlanDTO salvo = service.salvar(learningPlan);
         return ResponseEntity.ok(salvo);
         
     }
 
     //Get
    @GetMapping("/listar")
-    public ResponseEntity<List<LearningPlan>> listar() {
+    public ResponseEntity<List<LearningPlanDTO>> listar() {
 
-    List<LearningPlan> learningPlans = service.listar();
+    List<LearningPlanDTO> learningPlans = service.listar();
 
     if (learningPlans.isEmpty()) {
         return ResponseEntity.noContent().build();
@@ -50,15 +49,14 @@ public class LearningPlanController {
 
     //Update
     @PatchMapping("/alterar/{id}")
-    public ResponseEntity<LearningPlan> alterarPorId(
+    public ResponseEntity<LearningPlanDTO> alterarPorId(
         @PathVariable Long id,
         @RequestBody Map<String, Object> campos){
         
-            LearningPlan learningPlan = service.alterar(id, campos);
+            LearningPlanDTO learningPlan = service.alterar(id, campos);
             
     return ResponseEntity.ok(learningPlan);
         }   
-
 
     //Delete
     @DeleteMapping("/delete/{id}")
@@ -66,7 +64,5 @@ public class LearningPlanController {
         service.deletar(id);
         return ResponseEntity.ok("Plano de aprendizado do id " + id + " foi deletado!");
     }
-    
-
 }
 

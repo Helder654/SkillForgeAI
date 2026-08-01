@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.example.SkillForgeAI.DTO.LearningPlanDTO;
+import com.example.SkillForgeAI.Enums.Nivel;
 import com.example.SkillForgeAI.Mapper.LearningPlanMapper;
 import com.example.SkillForgeAI.Model.LearningPlanModel;
 import com.example.SkillForgeAI.Repository.LearningPlanRepository;
@@ -49,7 +50,7 @@ public class LearningPlanService{
          }
            
         if(campos.containsKey("nivel")){
-            learningPlan.setNivel((String) campos.get("nivel"));
+            learningPlan.setNivel((Nivel) campos.get("nivel"));
          }    
 
          if(campos.containsKey("diasDisponiveis")){

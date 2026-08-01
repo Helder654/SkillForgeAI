@@ -1,6 +1,10 @@
 package com.example.SkillForgeAI.Model;
 
+import com.example.SkillForgeAI.Enums.Nivel;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -18,11 +22,18 @@ public class LearningPlanModel{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String nome;
+    
     private String habilidade;
-    private String nivel;
+    
+    @Enumerated(EnumType.STRING)
+    private Nivel nivel;
+    
     private Integer diasDisponiveis;
+    
     private Integer horasPorDia;
+    
     private String objetivo;
     
     public Long getId() {
@@ -43,10 +54,10 @@ public class LearningPlanModel{
     public void setHabilidade(String habilidade) {
         this.habilidade = habilidade;
     }
-    public String getNivel() {
+    public Nivel getNivel() {
         return nivel;
     }
-    public void setNivel(String nivel) {
+    public void setNivel(Nivel nivel) {
         this.nivel = nivel;
     }
     public Integer getDiasDisponiveis() {

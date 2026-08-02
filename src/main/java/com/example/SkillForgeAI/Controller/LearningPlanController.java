@@ -3,6 +3,7 @@ package com.example.SkillForgeAI.Controller;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,8 +62,13 @@ public class LearningPlanController {
     //Delete
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deletar(@PathVariable Long id){
+        if(service.listarId(id).isPresent()){
         service.deletar(id);
         return ResponseEntity.ok("Plano de aprendizado do id " + id + " foi deletado!");
+    }else{
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        .body("Plano de aprendizado do id " + id + " não foi encontrado!");
     }
+}
 }
 

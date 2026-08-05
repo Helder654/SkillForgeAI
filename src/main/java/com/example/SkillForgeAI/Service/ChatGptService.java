@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.example.SkillForgeAI.DTO.LearningPlanDTO;
+import com.example.SkillForgeAI.DTO.SkillDTO;
 
 import reactor.core.publisher.Mono;
 
@@ -28,32 +28,32 @@ public class ChatGptService {
         }
     }
 
-    public Mono<String> generateLearningRoadmap(
-            List<LearningPlanDTO> learningPlans) {
+    public Mono<String> generateCareerRecommendation(
+            List<SkillDTO> skills) {
 
-        String dadosDosPlanos = learningPlans.stream()
-                .map(learningPlan -> String.format(
-                        "Nome do estudante: %s\n" +
-                        "Habilidade que deseja aprender: %s\n" +
-                        "Nível atual: %s\n" +
-                        "Dias disponíveis: %d\n" +
-                        "Horas por dia: %d\n" +
-                        "Objetivo: %s",
-                        learningPlan.getNome(),
-                        learningPlan.getHabilidade(),
-                        learningPlan.getNivel(),
-                        learningPlan.getDiasDisponiveis(),
-                        learningPlan.getHorasPorDia(),
-                        learningPlan.getObjetivo()
+        String dadosDasHabilidades = skills.stream()
+                .map(skill -> String.format(
+                        "Habilidade: %s\n" +
+                        "Nível: %s\n" +
+                        "Anos de experiência: %d\n" +
+                        "Observação: %s",
+                        skill.getNome(),
+                        skill.getNivel(),
+                        skill.getAnosExperiencia(),
+                        skill.getObservacao()
                 ))
                 .collect(Collectors.joining("\n\n"));
 
         String prompt =
-                "Crie um roadmap de estudos personalizado com base " +
-                "nas informações abaixo:\n\n" +
-                dadosDosPlanos +
-                "\n\nOrganize o roadmap por dias, indicando os assuntos, " +
-                "atividades práticas e objetivos de cada etapa.";
+                "Analise as habilidades abaixo e recomende três carreiras " +
+                "compatíveis com esse perfil:\n\n" +
+                dadosDasHabilidades +
+                "\n\nPara cada carreira, informe:" +
+                "\n- nome da carreira" +
+                "\n- nível de compatibilidade" +
+                "\n- motivo da recomendação" +
+                "\n- habilidades que ainda precisam ser desenvolvidas" +
+                "\n- próximos passos recomendados.";
 
         Map<String, Object> requestBody = Map.of(
                 "model", "gpt-5-mini",
@@ -76,7 +76,7 @@ public class ChatGptService {
                 (List<Map<String, Object>>) response.get("output");
 
         if (output == null || output.isEmpty()) {
-            return "Nenhuma resposta foi gerada.";
+            return "Nenhuma recomendação foi gerada.";
         }
 
         for (Map<String, Object> outputItem : output) {
@@ -98,6 +98,6 @@ public class ChatGptService {
             }
         }
 
-        return "Nenhuma resposta foi gerada.";
+        return "Nenhuma recomendação foi gerada.";
     }
 }

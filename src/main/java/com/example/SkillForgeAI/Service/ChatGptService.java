@@ -29,45 +29,65 @@ public class ChatGptService {
     }
 
     public Mono<String> generateCareerRecommendation(
-            List<SkillDTO> skills) {
+        List<SkillDTO> skills) {
 
-        String dadosDasHabilidades = skills.stream()
-                .map(skill -> String.format(
-                        "Habilidade: %s\n" +
-                        "Nível: %s\n" +
-                        "Anos de experiência: %d\n" +
-                        "Observação: %s",
-                        skill.getNome(),
-                        skill.getNivel(),
-                        skill.getAnosExperiencia(),
-                        skill.getObservacao()
-                ))
-                .collect(Collectors.joining("\n\n"));
+    String dadosDasHabilidades = skills.stream()
+            .map(skill -> String.format(
+                    "Habilidade: %s\n" +
+                    "Nível: %s\n" +
+                    "Anos de experiência: %d\n" +
+                    "Observação: %s",
+                    skill.getNome(),
+                    skill.getNivel(),
+                    skill.getAnosExperiencia() != null
+                            ? skill.getAnosExperiencia()
+                            : 0,
+                    skill.getObservacao() != null
+                            ? skill.getObservacao()
+                            : "Sem observação"
+            ))
+            .collect(Collectors.joining("\n\n"));
 
-        String prompt =
-                "Analise as habilidades abaixo e recomende três carreiras " +
-                "compatíveis com esse perfil:\n\n" +
-                dadosDasHabilidades +
-                "\n\nPara cada carreira, informe:" +
-                "\n- nome da carreira" +
-                "\n- nível de compatibilidade" +
-                "\n- motivo da recomendação" +
-                "\n- habilidades que ainda precisam ser desenvolvidas" +
-                "\n- próximos passos recomendados.";
+    String prompt = """
+            Analise as habilidades abaixo e recomende exatamente 3 carreiras
+            compatíveis com o perfil da pessoa.
 
-        Map<String, Object> requestBody = Map.of(
-                "model", "gpt-5-mini",
-                "input", prompt
-        );
+            Para cada carreira, apresente somente:
 
-        return webClient.post()
-                .header("Authorization", "Bearer " + apiKey)
-                .header("Content-Type", "application/json")
-                .bodyValue(requestBody)
-                .retrieve()
-                .bodyToMono(Map.class)
-                .map(this::extractResponseText);
-    }
+            1. Nome da carreira
+            2. Compatibilidade: baixa, média, alta ou muito alta
+            3. Motivo da recomendação em no máximo 2 frases
+            4. Três habilidades que a pessoa precisa desenvolver
+            5. Três próximos passos práticos
+
+            Regras importantes:
+            - Responda em português do Brasil.
+            - Seja direto e profissional.
+            - Não agradeça.
+            - Não faça perguntas ao final.
+            - Não ofereça ajuda adicional.
+            - Não escreva introdução ou conclusão.
+            - Não use tabelas.
+            - Não ultrapasse aproximadamente 300 palavras.
+            - Considere somente as habilidades fornecidas.
+
+            Habilidades cadastradas:
+
+            """ + dadosDasHabilidades;
+
+    Map<String, Object> requestBody = Map.of(
+            "model", "gpt-5-mini",
+            "input", prompt
+    );
+
+    return webClient.post()
+            .header("Authorization", "Bearer " + apiKey)
+            .header("Content-Type", "application/json")
+            .bodyValue(requestBody)
+            .retrieve()
+            .bodyToMono(Map.class)
+            .map(this::extractResponseText);
+}
 
     @SuppressWarnings("unchecked")
     private String extractResponseText(Map<String, Object> response) {

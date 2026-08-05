@@ -9,15 +9,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
-public class LearningPlanDTO {
+public class SkillDTO {
 
     private Long id;
     private String nome;
-    private String habilidade;
     private Nivel nivel;
-    private Integer diasDisponiveis;
-    private Integer horasPorDia;
-    private String objetivo;
-
+    private Integer anosExperiencia;
+    private String observacao;
 }

@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>SkillForgeAI</title>
+
+    <link
+        rel="stylesheet"
+        th:href="@{/css/style.css}"
+    >
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <header class="topbar">
+
+        <div class="brand">
+
+            <div class="brand-icon" aria-hidden="true">
+
+                <svg viewBox="0 0 64 64">
+                    <path
+                        d="M11 18H51C54.8 18 58 21.2 58 25C58 28.8 54.8 32 51 32H42C37.5 32 34 35.5 34 40V42H46C49.3 42 52 44.7 52 48V50H39V56H21V50H9V47C9 43.7 11.7 41 15 41H24V37C24 32.6 20.4 29 16 29H11V18Z"
+                        fill="currentColor"
+                    />
+                </svg>
+
+            </div>
+
+            <div class="brand-text">
+
+                <h1>SkillForgeAI</h1>
+
+                <p>
+                    Transforme habilidades em possibilidades de carreira.
+                </p>
+
+            </div>
+
+        </div>
+
+    </header>
+
+    <main class="dashboard">
+
+        <!-- COLUNA ESQUERDA -->
+        <section class="panel skills-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="section-label">
+                        SEU PERFIL
+                    </span>
+
+                    <h2>Suas habilidades</h2>
+
+                    <p
+                        class="skills-counter"
+                        th:text="${#lists.size(skills)} + ' habilidade(s)'"
+                    >
+                        0 habilidades
+                    </p>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="button button-primary button-new-skill"
+                    onclick="abrirFormulario()"
+                >
+
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path
+                            d="M12 5V19M5 12H19"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.2"
+                            stroke-linecap="round"
+                        />
+                    </svg>
+
+                    <span>Nova habilidade</span>
+
+                </button>
+
+            </div>
+
+            <!-- FORMULÁRIO -->
+            <div
+                id="formularioSkill"
+                class="form-card hidden"
+            >
+
+                <div class="form-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            NOVA HABILIDADE
+                        </span>
+
+                        <h3>Adicionar habilidade</h3>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="close-button"
+                        onclick="fecharFormulario()"
+                        aria-label="Fechar formulário"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+                <form
+                    th:action="@{/pagina/skill/criar}"
+                    th:object="${skill}"
+                    method="post"
+                    class="skill-form"
+                >
+
+                    <div class="field">
+
+                        <label for="nome">
+                            Nome da habilidade
+                        </label>
+
+                        <input
+                            id="nome"
+                            type="text"
+                            th:field="*{nome}"
+                            placeholder="Exemplo: Java"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="form-row">
+
+                        <div class="field">
+
+                            <label for="nivel">
+                                Nível
+                            </label>
+
+                            <select
+                                id="nivel"
+                                th:field="*{nivel}"
+                                required
+                            >
+
+                                <option value="">
+                                    Selecione
+                                </option>
+
+                                <option value="INICIANTE">
+                                    Iniciante
+                                </option>
+
+                                <option value="INTERMEDIARIO">
+                                    Intermediário
+                                </option>
+
+                                <option value="AVANCADO">
+                                    Avançado
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="field">
+
+                            <label for="anosExperiencia">
+                                Experiência
+                            </label>
+
+                            <input
+                                id="anosExperiencia"
+                                type="number"
+                                min="0"
+                                value="0"
+                                th:field="*{anosExperiencia}"
+                                placeholder="Anos"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+                    <div class="field">
+
+                        <label for="observacao">
+                            Observação
+                        </label>
+
+                        <textarea
+                            id="observacao"
+                            th:field="*{observacao}"
+                            placeholder="Exemplo: experiência com Spring Boot e APIs REST"
+                        ></textarea>
+
+                    </div>
+
+                    <div class="form-actions">
+
+                        <button
+                            type="button"
+                            class="button button-secondary"
+                            onclick="fecharFormulario()"
+                        >
+                            Cancelar
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="button button-primary"
+                        >
+
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path
+                                    d="M5 12.5L9.5 17L19 7.5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2.2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                            </svg>
+
+                            Salvar
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <!-- LISTA VAZIA -->
+            <div
+                class="empty-state"
+                th:if="${#lists.isEmpty(skills)}"
+            >
+
+                <div class="empty-icon">
+
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path
+                            d="M12 5V19M5 12H19"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                        />
+                    </svg>
+
+                </div>
+
+                <h3>Nenhuma habilidade cadastrada</h3>
+
+                <button
+                    type="button"
+                    class="button button-primary"
+                    onclick="abrirFormulario()"
+                >
+                    Adicionar habilidade
+                </button>
+
+            </div>
+
+            <!-- LISTA -->
+            <div
+                class="skills-list"
+                th:if="${!#lists.isEmpty(skills)}"
+            >
+
+                <article
+                    class="skill-card"
+                    th:each="skillItem : ${skills}"
+                >
+
+                    <div class="skill-content">
+
+                        <div
+                            class="skill-letter"
+                            th:text="${#strings.substring(skillItem.nome, 0, 1)}"
+                        >
+                            J
+                        </div>
+
+                        <div class="skill-details">
+
+                            <div class="skill-title-row">
+
+                                <h3 th:text="${skillItem.nome}">
+                                    Java
+                                </h3>
+
+                                <span
+                                    class="skill-level level-iniciante"
+                                    th:if="${skillItem.nivel != null and skillItem.nivel.toString() == 'INICIANTE'}"
+                                >
+                                    Iniciante
+                                </span>
+
+                                <span
+                                    class="skill-level level-intermediario"
+                                    th:if="${skillItem.nivel != null and skillItem.nivel.toString() == 'INTERMEDIARIO'}"
+                                >
+                                    Intermediário
+                                </span>
+
+                                <span
+                                    class="skill-level level-avancado"
+                                    th:if="${skillItem.nivel != null and skillItem.nivel.toString() == 'AVANCADO'}"
+                                >
+                                    Avançado
+                                </span>
+
+                            </div>
+
+                            <p class="skill-experience">
+
+                                <strong
+                                    th:text="${skillItem.anosExperiencia}"
+                                >
+                                    1
+                                </strong>
+
+                                <span>ano(s) de experiência</span>
+
+                            </p>
+
+                            <p
+                                class="skill-observation"
+                                th:text="${#strings.isEmpty(skillItem.observacao) ? 'Sem observação.' : skillItem.observacao}"
+                            >
+                                Experiência com Spring Boot
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <form
+                        th:action="@{'/pagina/skill/deletar/' + ${skillItem.id}}"
+                        method="post"
+                        onsubmit="return confirmarExclusao()"
+                    >
+
+                        <button
+                            type="submit"
+                            class="delete-button"
+                            title="Excluir habilidade"
+                            aria-label="Excluir habilidade"
+                        >
+
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+
+                                <path
+                                    d="M4 7H20"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                />
+
+                                <path
+                                    d="M9 7V4H15V7"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+
+                                <path
+                                    d="M7 7L8 20H16L17 7"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+
+                                <path
+                                    d="M10 11V16M14 11V16"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                />
+
+                            </svg>
+
+                        </button>
+
+                    </form>
+
+                </article>
+
+            </div>
+
+        </section>
+
+        <!-- COLUNA DIREITA -->
+        <section class="panel ai-panel">
+
+            <div class="panel-header ai-header">
+
+                <div>
+
+                    <span class="section-label">
+                        INTELIGÊNCIA ARTIFICIAL
+                    </span>
+
+                    <h2>Recomendação de carreira</h2>
+
+                </div>
+
+            </div>
+
+            <div class="ai-content">
+
+                <form
+                    th:action="@{/pagina/carreira/gerar}"
+                    method="post"
+                    class="generate-form"
+                >
+
+                    <button
+                        type="submit"
+                        class="button button-generate"
+                        onclick="mostrarCarregamento(this)"
+                    >
+
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                                d="M12 3L13.8 8.2L19 10L13.8 11.8L12 17L10.2 11.8L5 10L10.2 8.2L12 3Z"
+                                fill="currentColor"
+                            />
+
+                            <path
+                                d="M18 15L18.8 17.2L21 18L18.8 18.8L18 21L17.2 18.8L15 18L17.2 17.2L18 15Z"
+                                fill="currentColor"
+                            />
+                        </svg>
+
+                        <span class="button-text">
+                            Gerar recomendação
+                        </span>
+
+                    </button>
+
+                </form>
+
+                <div
+                    class="error-message"
+                    th:if="${erro}"
+                >
+
+                    <strong>Ops!</strong>
+
+                    <span th:text="${erro}">
+                        Ocorreu um erro.
+                    </span>
+
+                </div>
+
+                <!-- RESULTADO -->
+                <div
+                    class="recommendation-box"
+                    th:if="${recomendacao}"
+                >
+
+                    <div class="recommendation-header">
+
+                        <div>
+
+                            <span class="section-label">
+                                RESULTADO
+                            </span>
+
+                            <h3>Análise do seu perfil</h3>
+
+                        </div>
+
+                        <span class="status-badge">
+                            Concluído
+                        </span>
+
+                    </div>
+
+                    <div
+                        class="recommendation-content"
+                        th:text="${recomendacao}"
+                    >
+                        A recomendação aparecerá aqui.
+                    </div>
+
+                </div>
+
+                <!-- ÁREA VAZIA -->
+                <div
+                    class="recommendation-placeholder"
+                    th:if="${recomendacao == null}"
+                ></div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script>
+    function abrirFormulario() {
+        const formulario = document.getElementById("formularioSkill");
+
+        formulario.classList.remove("hidden");
+
+        requestAnimationFrame(() => {
+            formulario.classList.add("form-visible");
+        });
+
+        setTimeout(() => {
+            document.getElementById("nome").focus();
+        }, 150);
+    }
+
+    function fecharFormulario() {
+        const formulario = document.getElementById("formularioSkill");
+
+        formulario.classList.remove("form-visible");
+
+        setTimeout(() => {
+            formulario.classList.add("hidden");
+        }, 180);
+    }
+
+    function confirmarExclusao() {
+        return confirm(
+            "Tem certeza que deseja excluir esta habilidade?"
+        );
+    }
+
+    function mostrarCarregamento(botao) {
+        const texto = botao.querySelector(".button-text");
+
+        texto.textContent = "Gerando...";
+        botao.classList.add("loading");
+    }
+</script>
+
+</body>
+</html>
